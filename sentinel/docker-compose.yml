@@ -1,0 +1,32 @@
+# RuleStox 維運哨兵 L1（TASK-376）— Uptime Kuma 單容器
+#
+# 啟動： docker compose -f RuleOps/sentinel/docker-compose.yml up -d
+# 停止： docker compose -f RuleOps/sentinel/docker-compose.yml down     （volume 保留）
+#
+# 設計約束：
+# - project 名顯式命名，避免與其他專案的 docker/ 目錄撞進同一個 compose project
+#   （RulePlatform docker-compose.prod.yml:17-22 的既有教訓）。
+# - image **釘死版本**，不用 `2` 浮動 tag：latest／浮動 tag 會無預警換版，
+#   而哨兵換版失敗時你不會收到告警——因為壞掉的正是告警系統本身
+#   （同 RulePlatform cloudflared 釘 2026.8.2 的理由）。
+name: ruleops-kuma
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.5.3
+    container_name: ruleops_kuma
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - kuma_data:/app/data
+    environment:
+      TZ: Asia/Taipei
+    # Windows Docker Desktop 上 host.docker.internal 內建可用；
+    # Stage 1 的 Linux VM 需要下面這行才解析得到 host（Stage 0 可留著、無副作用）。
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  kuma_data:
+    name: ruleops_kuma_data

@@ -1,0 +1,10 @@
+# 密鑰與備份，絕不進 repo（規格書 §9）
+.env
+.env.*
+!.env.example
+sentinel/backups/
+sentinel/simulate-push.sh
+
+# Claude Code worktree／本機設定不進 repo
+.claude/*
+!.claude/settings.json
