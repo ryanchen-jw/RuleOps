@@ -8,3 +8,6 @@ sentinel/simulate-push.sh
 # Claude Code worktree／本機設定不進 repo
 .claude/*
 !.claude/settings.json
+
+# gstack browse 的本機瀏覽器狀態（含 token）
+.gstack/
